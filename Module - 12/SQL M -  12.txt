@@ -1,0 +1,161 @@
+-- CREATE INDEX
+-- Create an index on a column
+CREATE INDEX idx_students_name
+ON students(name);
+
+-- Create an index on marks
+CREATE INDEX idx_students_marks
+ON students(marks);
+
+
+-- UNIQUE INDEX
+-- Create an index that does not allow duplicate values
+CREATE UNIQUE INDEX idx_students_email
+ON students(email);
+
+
+-- COMPOSITE INDEX
+-- Create an index using multiple columns
+CREATE INDEX idx_students_course_marks
+ON students(course, marks);
+
+
+-- VIEW INDEXES
+-- Display indexes of a table
+-- PostgreSQL
+SELECT *
+FROM pg_indexes
+WHERE tablename = 'students';
+
+
+-- DROP INDEX
+-- Remove an index
+DROP INDEX idx_students_name;
+
+-- Remove another index
+DROP INDEX idx_students_marks;
+
+-- STORED PROCEDURE
+-- A stored procedure is a set of SQL statements
+-- stored in the database and executed when called.
+
+
+-- CREATE A STORED PROCEDURE
+CREATE PROCEDURE get_students()
+LANGUAGE SQL
+AS $$
+    SELECT * FROM students;
+$$;
+
+
+-- CALL A STORED PROCEDURE
+CALL get_students();
+
+
+-- STORED PROCEDURE WITH PARAMETER
+CREATE PROCEDURE get_student_by_id(student_id INT)
+LANGUAGE SQL
+AS $$
+    SELECT * FROM students
+    WHERE id = student_id;
+$$;
+
+
+-- CALL PROCEDURE WITH PARAMETER
+CALL get_student_by_id(10);
+
+
+-- DROP STORED PROCEDURE
+DROP PROCEDURE get_students();
+
+
+-- FUNCTION
+-- A function is a stored program that performs an operation
+-- and returns a value.
+
+
+-- CREATE A FUNCTION
+CREATE FUNCTION get_total_students()
+RETURNS INT
+LANGUAGE SQL
+AS $$
+    SELECT COUNT(*) FROM students;
+$$;
+
+
+-- CALL A FUNCTION
+SELECT get_total_students();
+
+
+-- FUNCTION WITH PARAMETER
+CREATE FUNCTION get_student_marks(student_id INT)
+RETURNS INT
+LANGUAGE SQL
+AS $$
+    SELECT marks
+    FROM students
+    WHERE id = student_id;
+$$;
+
+
+-- CALL FUNCTION WITH PARAMETER
+SELECT get_student_marks(10);
+
+
+-- DROP FUNCTION
+DROP FUNCTION get_total_students();
+
+-- BEGIN
+-- Starts a transaction
+BEGIN;
+
+-- Make changes inside the transaction
+UPDATE students
+SET marks = 95
+WHERE id = 10;
+
+
+-- COMMIT
+-- Permanently saves all changes made in the transaction
+COMMIT;
+
+
+-- ROLLBACK
+-- Cancels all changes made since BEGIN
+BEGIN;
+
+UPDATE students
+SET marks = 50
+WHERE id = 10;
+
+-- Undo the UPDATE
+ROLLBACK;
+
+
+-- MULTIPLE OPERATIONS IN ONE TRANSACTION
+BEGIN;
+
+UPDATE students
+SET marks = 90
+WHERE id = 10;
+
+UPDATE students
+SET marks = 85
+WHERE id = 11;
+
+-- Save both changes permanently
+COMMIT;
+
+
+-- ROLLBACK MULTIPLE OPERATIONS
+BEGIN;
+
+UPDATE students
+SET marks = 40
+WHERE id = 10;
+
+DELETE FROM students
+WHERE id = 11;
+
+-- Undo both operations
+ROLLBACK;
